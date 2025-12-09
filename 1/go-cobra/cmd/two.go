@@ -12,8 +12,9 @@ import (
 
 // twoCmd represents the two command
 var twoCmd = &cobra.Command{
-	Use:   "two",
-	Short: "A brief description of your command",
+	Use:     "two",
+	Aliases: []string{"cmd22"},
+	Short:   "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
