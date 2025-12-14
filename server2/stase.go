@@ -82,6 +82,24 @@ func saveJSON(filepath string) error {
 func readJSON(filepath string) error {
 	_, err := os.Stat(filepath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			os.OpenFile(filepath, os.O_RDONLY|os.O_CREATE, 0666)
+			return nil
+		}
 		return err
 	}
+	f, err := os.Open(filepath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	err = Des(&data, f)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func createindex() {
+	index = make(map[string]int)
 }
