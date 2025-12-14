@@ -53,3 +53,24 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	body := fmt.Sprintf("Total entries: %d\n", len(data))
 	fmt.Fprintf(w, "%s", body)
 }
+
+func insertHandler(w http.ResponseWriter, r *http.Request) {
+	parmStr := strings.Split(r.URL.Path, "/")
+	fmt.Println("path", parmStr)
+	if len(parmStr) < 4 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprint(w, "400 bad request , Not enough arguments:"+r.URL.Path)
+		return
+	}
+	dataest := parmStr[2]
+	dataStr := parmStr[3:]
+	data := make([]float64, 0)
+
+	for _, v := range dataStr {
+		val, err := strconv.ParseFloat(v, 64)
+		if err == nil {
+			data = append(data, val)
+		}
+	}
+	entry := Procces(dataest)
+}
