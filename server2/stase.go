@@ -29,4 +29,36 @@ func Procces(file string, s []float64) Information {
 	meanValue, standardDeviation := stdDev(s)
 	c.Mean = meanValue
 	c.StdDev = standardDeviation
+
+	return c
 }
+
+func stdDev(s []float64) (float64, float64) {
+	sum := 0.0
+	for _, v := range s {
+		sum += v
+	}
+	mean := sum / float64(len(s))
+
+	var squared float64
+	for i := 0; i < len(s); i++ {
+		squared += math.Pow(s[i]-mean, 2)
+	}
+	standardDeviation := math.Sqrt(squared / float64(len(s)))
+	return mean, standardDeviation
+
+}
+
+var JSONFILE = "data.json"
+
+type PhoneBook []Information
+
+var data = PhoneBook{}
+var index map[string]int
+
+func Des(slice []interface{} , r io.Reader) error{
+	e:= json.NewDecoder(r)
+	return e.Decode(slice)
+}
+
+func
