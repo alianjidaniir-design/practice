@@ -11,7 +11,7 @@ import (
 const PORT = ":1234"
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("serving")
+	log.Println("Serving:", r.URL.Path, "from", r.Host)
 	w.WriteHeader(http.StatusOK)
 	body := "Thanks for your request!\n"
 	fmt.Fprintf(w, body)
@@ -32,7 +32,7 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		Body := err.Error() + "\n"
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprint(w, "%s", Body)
+		fmt.Fprintf(w, "%s", Body)
 		return
 	}
 	body := dataest + "deleted\n!"
@@ -78,17 +78,17 @@ func insertHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusNotModified)
 		Body := "There is nothing to insert!\n"
-		fmt.Fprint(w, "%s", Body)
+		fmt.Fprintf(w, "%s", Body)
 	} else {
 		w.WriteHeader(http.StatusOK)
 		Body := "New Record added successfully!\n"
-		fmt.Fprint(w, "%s", Body)
+		fmt.Fprintf(w, "%s", Body)
 	}
 	log.Println("Serving:", r.URL.Path, "from", r.Host)
 
 }
 
-func SearchHandler(w http.ResponseWriter, r *http.Request) {
+func searchHandler(w http.ResponseWriter, r *http.Request) {
 	parmStr := strings.Split(r.URL.Path, "/")
 	fmt.Println("path", parmStr)
 	if len(parmStr) < 3 {

@@ -148,7 +148,7 @@ func search(key string) *Information {
 func list() string {
 	var all string
 	for _, k := range data {
-		all += all + fmt.Sprintf("%s\t%d\t%f\t%f\n", k.Name, k.Len, k.StdDev, k.Mean)
+		all = all + fmt.Sprintf("%s\t%d\t%f\t%f\n", k.Name, k.Len, k.Mean, k.StdDev)
 	}
 	return all
 }
@@ -171,8 +171,8 @@ func main() {
 	}
 
 	mux.Handle("/list", http.HandlerFunc(listHandler))
-	mux.Handle("/insert/", http.HandlerFunc(inaertHandler))
-	mux.Handle("/insert", http.HandlerFunc(inserHandler))
+	mux.Handle("/insert/", http.HandlerFunc(insertHandler))
+	mux.Handle("/insert", http.HandlerFunc(insertHandler))
 	mux.Handle("/search", http.HandlerFunc(searchHandler))
 	mux.Handle("/search/", http.HandlerFunc(searchHandler))
 	mux.Handle("/delete/", http.HandlerFunc(deleteHandler))
