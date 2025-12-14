@@ -161,4 +161,28 @@ func main() {
 	}
 	createIndex()
 
+	mux := http.NewServeMux()
+	server := &http.Server{
+		Addr:         PORT,
+		Handler:      mux,
+		IdleTimeout:  2 * time.Second,
+		ReadTimeout:  2 * time.Second,
+		WriteTimeout: 2 * time.Second,
+	}
+
+	mux.Handle("/list", http.HandlerFunc(listHandler))
+	mux.Handle("/insert/", http.HandlerFunc(inaertHandler))
+	mux.Handle("/insert", http.HandlerFunc(inserHandler))
+	mux.Handle("/search", http.HandlerFunc(searchHandler))
+	mux.Handle("/search/", http.HandlerFunc(searchHandler))
+	mux.Handle("/delete/", http.HandlerFunc(deleteHandler))
+	mux.Handle("/status", http.HandlerFunc(statusHandler))
+	mux.Handle("/", http.HandlerFunc(defaultHandler))
+
+	fmt.Println("Ready for serve ", PORT)
+	err = server.ListenAndServe()
+	if err != nil {
+		fmt.Println("Error", err)
+		return
+	}
 }
