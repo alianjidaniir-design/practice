@@ -56,9 +56,32 @@ type PhoneBook []Information
 var data = PhoneBook{}
 var index map[string]int
 
-func Des(slice []interface{} , r io.Reader) error{
-	e:= json.NewDecoder(r)
+func Des(slice interface{}, r io.Reader) error {
+	e := json.NewDecoder(r)
 	return e.Decode(slice)
 }
 
-func
+func S(s interface{}, r io.Writer) error {
+	e := json.NewEncoder(r)
+	return e.Encode(s)
+}
+
+func saveJSON(filepath string) error {
+	f, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	err = S(&data, f)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func readJSON(filepath string) error {
+	_, err := os.Stat(filepath)
+	if err != nil {
+		return err
+	}
+}
