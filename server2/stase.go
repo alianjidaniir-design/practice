@@ -121,3 +121,44 @@ func insert(ps *Information) error {
 	}
 	return nil
 }
+
+func DElete(key string) error {
+	i, ok := index[key]
+	if !ok {
+		return errors.New("Not Found")
+
+	}
+	data = append(data[:i], data[i+1:]...)
+	delete(index, key)
+	err := saveJSON(JSONFILE)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func search(key string) (*Information, error) {
+	i, ok := index[key]
+	if !ok {
+		return nil, errors.New("Not Found")
+	}
+	return &data[i], nil
+}
+
+func list() string {
+	var all string
+	for _, k := range data {
+		all += all + fmt.Sprintf("%s\t%d\t%f\t%f\n", k.Name, k.Len, k.StdDev, k.Mean)
+	}
+	return all
+}
+
+func main() {
+	err := readJSON(JSONFILE)
+	if err != nil && err != io.EOF {
+		fmt.Println("Error", err)
+		return
+	}
+	createIndex()
+
+}
