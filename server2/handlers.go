@@ -72,5 +72,41 @@ func insertHandler(w http.ResponseWriter, r *http.Request) {
 			data = append(data, val)
 		}
 	}
-	entry := Procces(dataest)
+	entry := Procces(dataest, data)
+	err := insert(&entry)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusNotModified)
+		Body := "There is nothing to insert!\n"
+		fmt.Fprint(w, "%s", Body)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		Body := "New Record added successfully!\n"
+		fmt.Fprint(w, "%s", Body)
+	}
+	log.Println("Serving:", r.URL.Path, "from", r.Host)
+
+}
+
+func SearchHandler(w http.ResponseWriter, r *http.Request) {
+	parmStr := strings.Split(r.URL.Path, "/")
+	fmt.Println("path", parmStr)
+	if len(parmStr) < 3 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, "404 not found: "+r.URL.Path)
+		return
+	}
+	var body string
+	dataest := parmStr[2]
+	t := search(dataest)
+	if t == nil {
+		w.WriteHeader(http.StatusNotFound)
+		body = "Could not be found!\n" + dataest + "\n"
+	} else {
+		w.WriteHeader(http.StatusOK)
+		body = fmt.Sprintf("%s %d %f %f\n", t.Name, t.Len, t.Mean, t.StdDev)
+	}
+	log.Println("Serving:", r.URL.Path, "from", r.Host)
+	fmt.Fprintf(w, "%s", body)
+
 }

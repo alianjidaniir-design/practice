@@ -21,7 +21,7 @@ type Information struct {
 	StdDev float64
 }
 
-func Procces(file string, f2 int, s []float64) Information {
+func Procces(file string, s []float64) Information {
 	c := Information{}
 	c.Name = file
 	c.Len = len(s)
@@ -137,12 +137,12 @@ func DElete(key string) error {
 	return nil
 }
 
-func search(key string) (*Information, error) {
+func search(key string) *Information {
 	i, ok := index[key]
 	if !ok {
-		return nil, errors.New("Not Found")
+		return nil
 	}
-	return &data[i], nil
+	return &data[i]
 }
 
 func list() string {
