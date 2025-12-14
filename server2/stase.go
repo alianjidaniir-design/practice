@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -20,7 +21,7 @@ type Information struct {
 	StdDev float64
 }
 
-func Procces(file string, s []float64) Information {
+func Procces(file string, f2 int, s []float64) Information {
 	c := Information{}
 	c.Name = file
 	c.Len = len(s)
@@ -100,6 +101,23 @@ func readJSON(filepath string) error {
 	return nil
 }
 
-func createindex() {
+func createIndex() {
 	index = make(map[string]int)
+	for i, k := range data {
+		index[k.Name] = i
+	}
+}
+
+func insert(ps *Information) error {
+	_, ok := index[(*ps).Name]
+	if ok {
+		return errors.New("Duplicate name")
+	}
+	data = append(data, *ps)
+	createIndex()
+	err := saveJSON(JSONFILE)
+	if err != nil {
+		return err
+	}
+	return nil
 }
