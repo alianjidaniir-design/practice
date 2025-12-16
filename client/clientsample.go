@@ -2,17 +2,27 @@ package main
 
 import (
 	"fmt"
-	"net"
-	"bufio"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run client sample.go <file>")
+		fmt.Println("Usage: go run clientsample.go <file>", filepath.Base(os.Args[0]))
 		return
 	}
-	f, err
-
+	URL := os.Args[1]
+	data, err := http.Get(URL)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	_, err = io.Copy(os.Stdout, data.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	data.Body.Close()
 }
