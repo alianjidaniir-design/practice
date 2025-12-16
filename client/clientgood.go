@@ -13,7 +13,7 @@ import (
 
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Println("Usage: &s URL\n", filepath.Base(os.Args[0]))
+		fmt.Printf("Usage: %s URL\n", filepath.Base(os.Args[0]))
 		return
 	}
 
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	c := &http.Client{
-		Timeout: time.Second * 10,
+		Timeout: 10 * time.Second,
 	}
 
 	request, err := http.NewRequest(http.MethodGet, URL.String(), nil)
@@ -47,7 +47,7 @@ func main() {
 	if len(characterSet) > 1 {
 		fmt.Println("Character Set:", characterSet[1])
 	}
-	if httpData.ContentLength == 1 {
+	if httpData.ContentLength == -1 {
 		fmt.Println("ContentLength is unknown")
 	} else {
 		fmt.Println("ContentLength:", httpData.ContentLength)
