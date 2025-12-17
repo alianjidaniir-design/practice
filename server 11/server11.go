@@ -29,6 +29,7 @@ func main() {
 		PORT = ":" + arg[1]
 	}
 	fmt.Println("Using port:", PORT)
+
 	http.HandleFunc("/", myHandler)
 	http.HandleFunc("/time", timeHandler)
 	err := http.ListenAndServe(PORT, nil)
