@@ -1,13 +1,15 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // deleteCmd represents the delete command
@@ -21,20 +23,38 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		SERVER := viper.GetString("server")
+		port := viper.GetString("port")
+
+		dataset, _ := cmd.Flags().GetString("dataset")
+		if dataset == "" {
+			fmt.Println("Please provide a dataset name")
+			return
+		}
+		//create
+		URL := "http://" + SERVER + ":" + port + "/delete/" + dataset
+		// send
+		data, err := http.Get(URL)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		// Check HTTP
+		if data.StatusCode != http.StatusOK {
+			fmt.Println("Status Code:", data.StatusCode)
+			return
+		}
+		//Read
+		resp, err := io.ReadAll(data.Body)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(string(resp))
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deleteCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deleteCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// deleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	deleteCmd.Flags().StringP("dataset", "d", "", "dataset name to delete ")
 }
