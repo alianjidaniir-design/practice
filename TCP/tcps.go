@@ -34,19 +34,20 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	for {
+		netData, err := bufio.NewReader(c).ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if strings.TrimSpace(string(netData)) == "STOP" {
+			fmt.Println("Stopping")
+			return
+		}
+		fmt.Print("-> ", string(netData))
+		t := time.Now()
+		mytime := t.Format("2006-01-02 15:04:05") + "\n"
+		c.Write([]byte(mytime))
 
-	netData, err := bufio.NewReader(c).ReadString('\n')
-	if err != nil {
-		fmt.Println(err)
-		return
 	}
-	if strings.TrimSpace(string(netData)) == "STOP" {
-		fmt.Println("Stopping")
-		return
-	}
-	fmt.Print("-> ", string(netData))
-	t := time.Now()
-	mytime := t.Format("2006-01-02 15:04:05") + "\n"
-	c.Write([]byte(mytime))
-
 }
