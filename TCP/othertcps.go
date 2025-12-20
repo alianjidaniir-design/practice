@@ -9,11 +9,11 @@ import (
 
 func main() {
 	args := os.Args
-	if len(args) <= 1 {
+	if len(args) == 1 {
 		fmt.Println("Please enter a port number!")
 		return
 	}
-	SERVER := "localhost " + ":" + args[1]
+	SERVER := "localhost" + ":" + args[1]
 	s, err := net.ResolveTCPAddr("tcp", SERVER)
 	if err != nil {
 		fmt.Println(err)
@@ -43,7 +43,7 @@ func main() {
 			conn.Close()
 			return
 		}
-		fmt.Println(">>>>>>>", string(buffer[0:n-1]), "\n")
+		fmt.Print(">>>>>>>", string(buffer[0:n-1]), "\n")
 		_, err = conn.Write(buffer)
 		if err != nil {
 			fmt.Println(err)
