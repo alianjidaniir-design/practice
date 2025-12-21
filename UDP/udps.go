@@ -33,5 +33,22 @@ func main() {
 	defer connection.Close()
 	buffer := make([]byte, 1024)
 	rg := rand.New(rand.NewSource(time.Now().UnixNano()))
+	fmt.Println(rg.Intn(100))
+	for {
+		n, addr, err := connection.ReadFromUDP(buffer)
+		fmt.Println(" -- ", string(buffer[0:n-1]))
+		if strings.TrimSpace(string(buffer[0:n])) == "STOP" {
+			fmt.Println("Exiting UDP server!")
+			return
+		}
+		data := []byte(strconv.Itoa(int(random(1, 1001))))
+		fmt.Println(string(data))
+
+		_, err = connection.WriteToUDP(data, addr)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
 
 }
