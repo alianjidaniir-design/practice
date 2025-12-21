@@ -111,7 +111,7 @@ func createIndex() {
 func insert(ps *Information) error {
 	_, ok := index[(*ps).Name]
 	if ok {
-		return errors.New("Duplicate name")
+		return errors.New("duplicate name")
 	}
 	data = append(data, *ps)
 	createIndex()
@@ -125,7 +125,7 @@ func insert(ps *Information) error {
 func DElete(key string) error {
 	i, ok := index[key]
 	if !ok {
-		return errors.New("Not Found")
+		return errors.New("not Found")
 
 	}
 	data = append(data[:i], data[i+1:]...)

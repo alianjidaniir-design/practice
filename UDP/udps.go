@@ -7,14 +7,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 )
 
 func random(min, max int) int {
 	return rand.Intn(max-min) + min
 }
 func main() {
-	args := os.Args[1:]
+	args := os.Args
 	if len(args) == 1 {
 		fmt.Println("Usage: UDP UDP_PORT")
 		return
@@ -32,8 +31,7 @@ func main() {
 	}
 	defer connection.Close()
 	buffer := make([]byte, 1024)
-	rg := rand.New(rand.NewSource(time.Now().UnixNano()))
-	fmt.Println(rg.Intn(100))
+
 	for {
 		n, addr, err := connection.ReadFromUDP(buffer)
 		fmt.Println(" -- ", string(buffer[0:n-1]))
