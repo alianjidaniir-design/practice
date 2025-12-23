@@ -1,17 +1,18 @@
 version: "4.55"
 services:
   rabbitmq:
-    image: 'rabbitmq:3.12-management'
+    image: "rabbitmq:3.12-management"
     container_name: rabbit
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "5672:5672"
+      - "15672:15672"
     environment:
-      AMqp_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      AMQP_URL: "amqp://rabbitmq?connection_attempts=5&retry_delay=5"
       RABBITMQ_DEFAULT-USER: "guest"
       RABBITMQ_DEFAULT_PASS: "guest"
     networks:
         - rabbit
+
 networks:
    rabbit:
      driver: bridge
