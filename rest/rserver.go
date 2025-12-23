@@ -94,3 +94,23 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	return
 
 }
+
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Serving:", r.URL.Path, "from", r.Host, r.Method)
+	if r.Method != http.MethodDelete {
+		fmt.Fprintf(w, "%s\n", "Method Not Allowed")
+		http.Error(w, "Error:", http.StatusMethodNotAllowed)
+		return
+	}
+	d, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Error:", http.StatusBadRequest)
+		return
+	}
+	err := json.Unmarshal(d, &user)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Error:", http.StatusBadRequest)
+		return
+	}
+}
