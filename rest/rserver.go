@@ -80,4 +80,17 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(user)
+
+	_, ok := DATA[user.Username]
+	if ok && user.Username != "" {
+		log.Println("Found!")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "%s\n", d)
+	} else {
+		log.Println("Not Found!")
+		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, "Error:", http.StatusNotFound)
+	}
+	return
+
 }
