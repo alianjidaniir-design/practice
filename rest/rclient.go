@@ -10,17 +10,16 @@ import (
 	"time"
 )
 
-type User2 struct {
+type User struct {
 	Username string `json:"user"`
 	Password string `json:"password"`
 }
 
-var u1 = User2{"usr323", "1235t45"}
-var u2 = User2{"Ali", "678910"}
-var u3 = User2{"", "1234"}
-var u4 = User2{"Ali", "123434"}
+var u8 = User{"fdg", "1234"}
+var u7 = User{"3456", "123434"}
+var u12 = User{"356546", "123454356"}
 
-func deleteEndpoint(server string, user User2) int {
+func deleteEndpoint(server string, user User) int {
 	userMarshall, err := json.Marshal(user)
 	if err != nil {
 		fmt.Println("Error in request", err)
@@ -35,13 +34,17 @@ func deleteEndpoint(server string, user User2) int {
 	req.Header.Set("Content-Type", "application/json")
 
 	c := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 15 * time.Second,
 	}
 	resp, err := c.Do(req)
 	if err != nil {
 		fmt.Println("Error in request", err)
 	}
 	defer resp.Body.Close()
+
+	if resp == nil {
+		return http.StatusBadRequest
+	}
 
 	data, err := io.ReadAll(resp.Body)
 	fmt.Print("/delete returned ", string(data))
@@ -51,7 +54,7 @@ func deleteEndpoint(server string, user User2) int {
 	return resp.StatusCode
 }
 
-func getEndpoint(server string, user User2) int {
+func getEndpoint(server string, user User) int {
 	userMarshall, err := json.Marshal(user)
 	if err != nil {
 		fmt.Println("Error in request", err)
@@ -65,13 +68,16 @@ func getEndpoint(server string, user User2) int {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	c := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 15 * time.Second,
 	}
 	resp, err := c.Do(req)
 	if err != nil {
 		fmt.Println("Error", err)
 	}
 	defer resp.Body.Close()
+	if resp == nil {
+		return resp.StatusCode
+	}
 
 	data, err := io.ReadAll(resp.Body)
 	fmt.Print("/get returned ", string(data))
@@ -80,11 +86,11 @@ func getEndpoint(server string, user User2) int {
 	}
 	return resp.StatusCode
 }
-func addEndpoint(server string, user User2) int {
+func addEndpoint(server string, user User) int {
 	userMarshall, err := json.Marshal(user)
 	if err != nil {
 		fmt.Println("Error in request", err)
-		return http.StatusInternalServerError
+		return http.StatusBadRequest
 	}
 	u := bytes.NewReader(userMarshall)
 	req, err := http.NewRequest(http.MethodPost, server+addEndPoint, u)
@@ -94,13 +100,14 @@ func addEndpoint(server string, user User2) int {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	c := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 15 * time.Second,
 	}
 	resp, err := c.Do(req)
 	if resp == nil || (resp.StatusCode == http.StatusNotFound) {
 		return resp.StatusCode
 	}
 	defer resp.Body.Close()
+
 	return resp.StatusCode
 }
 
@@ -111,7 +118,7 @@ func timeEndpoint(server string) (int, string) {
 		return http.StatusBadRequest, ""
 	}
 	c := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 15 * time.Second,
 	}
 	resp, err := c.Do(req)
 	if resp == nil || (resp.StatusCode == http.StatusNotFound) {
@@ -132,7 +139,7 @@ func slashEndpoint(server, URL string) (int, string) {
 		return http.StatusBadRequest, ""
 	}
 	c := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 15 * time.Second,
 	}
 	resp, err := c.Do(req)
 	if resp == nil {
@@ -161,32 +168,43 @@ func main() {
 	server := a[1]
 
 	fmt.Println("/add")
-	httpCode := addEndpoint(server, u4)
+	httpCode := addEndpoint(server, u8)
 	if httpCode != http.StatusOK {
-		fmt.Println("u4 Return code! ", httpCode)
+		fmt.Println("u8 Return code! ", httpCode)
 	} else {
-		fmt.Println("u4 Data added", u1, httpCode)
+		fmt.Println("u8 Data added", u8, httpCode)
 	}
-	httpCode = addEndpoint(server, u3)
+	httpCode = addEndpoint(server, u7)
 	if httpCode != http.StatusOK {
-		fmt.Println("u2 Return code!", httpCode)
+		fmt.Println("u7 Return code!", httpCode)
 	} else {
-		fmt.Println("u2 Data added", u2, httpCode)
+		fmt.Println("u7 Data added", u7, httpCode)
+	}
+	httpCode = addEndpoint(server, u12)
+	if httpCode != http.StatusOK {
+		fmt.Println("u12 Return code!", httpCode)
+	} else {
+		fmt.Println("u12 Data added", u12, httpCode)
 	}
 	//////////////////////
-	fmt.Println("/delete")
-	httpCode = deleteEndpoint(server, u3)
-	fmt.Println("/delete u3 return code", httpCode)
-
-	httpCode = deleteEndpoint(server, u2)
-	fmt.Println("/delete u2 return code", httpCode)
 	//////////////////
 	fmt.Println("/get")
-	httpCode = getEndpoint(server, u1)
-	fmt.Println("/get u1 return code", httpCode)
+	httpCode = getEndpoint(server, u8)
+	fmt.Println("/get u8 return code", httpCode)
+	httpCode = getEndpoint(server, u7)
+	fmt.Println("/get u7 return code", httpCode)
 
-	httpCode = getEndpoint(server, u3)
-	fmt.Print("/get u3 return code", httpCode)
+	httpCode = getEndpoint(server, u12)
+	fmt.Print("/get u12 return code", httpCode)
+	/////////////
+	fmt.Println("/delete")
+	httpCode = deleteEndpoint(server, u8)
+	fmt.Println("/delete u8 return code", httpCode)
+	httpCode = deleteEndpoint(server, u7)
+	fmt.Println("/delete u7 return code", httpCode)
+	httpCode = deleteEndpoint(server, u12)
+	fmt.Println("/delete u12 return code", httpCode)
+
 	//////////////
 	fmt.Println("/time")
 	httpCode, mytime := timeEndpoint(server)
