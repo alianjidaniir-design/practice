@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -24,14 +23,14 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving:", r.URL.Path, "from", r.Host)
 	w.WriteHeader(http.StatusNotFound)
 	body := "Thanks\n"
-	fmt.Fprintln(w, "%s", body)
+	fmt.Fprintf(w, "%s", body)
 }
 
 func timeHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Serving:", r.URL.Path, "from", r.Host)
 	t := time.Now().Format("2006-01-02 15:04:05")
 	body := "The currect time is: " + t + "\n"
-	fmt.Fprintln(w, "%s", body)
+	fmt.Fprintf(w, "%s", body)
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,8 +55,8 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error:", http.StatusBadRequest)
 		return
 	}
-	DATA["username"] = user.Username
-	log.Println(user.Username)
+	DATA[user.Username] = user.Password
+	log.Println(DATA)
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -70,6 +69,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	d, err := io.ReadAll(r.Body)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Error:", http.StatusBadRequest)
 		return
 	}
@@ -89,7 +89,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		log.Println("Not Found!")
 		w.WriteHeader(http.StatusNotFound)
-		http.Error(w, "Error:", http.StatusNotFound)
+		http.Error(w, "Map - Resource not found!", http.StatusNotFound)
 	}
 	return
 
@@ -107,10 +107,54 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error:", http.StatusBadRequest)
 		return
 	}
-	err := json.Unmarshal(d, &user)
+	err = json.Unmarshal(d, &user)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Error:", http.StatusBadRequest)
+		return
+	}
+	log.Println(err)
+
+	_, ok := DATA[user.Username]
+	if ok && user.Username != "" {
+		if user.Password == DATA[user.Username] {
+			delete(DATA, user.Username)
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, "%s\n", d)
+			log.Println(DATA)
+		}
+	} else {
+		log.Println("User", user.Username, "Not Found!")
+		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, "Error:", http.StatusNotFound)
+
+	}
+	return
+}
+
+func main() {
+	arq := os.Args
+	if len(arq) > 1 {
+		PORT = ":" + arq[1]
+	}
+	mux := http.NewServeMux()
+	s := &http.Server{
+		Addr:         PORT,
+		Handler:      mux,
+		IdleTimeout:  6 * time.Second,
+		ReadTimeout:  2 * time.Second,
+		WriteTimeout: 2 * time.Second,
+	}
+	mux.Handle("/", http.HandlerFunc(defaultHandler))
+	mux.Handle("/add", http.HandlerFunc(addHandler))
+	mux.Handle("/get", http.HandlerFunc(getHandler))
+	mux.Handle("/delete", http.HandlerFunc(deleteHandler))
+	mux.Handle("/time", http.HandlerFunc(timeHandler))
+
+	fmt.Println("Ready to serve at", PORT)
+	err := s.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
 		return
 	}
 }
