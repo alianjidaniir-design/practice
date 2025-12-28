@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	db, err := sql.Open("sqlite3", "Ali.db")
+	db, err := sql.Open("sqlite3", "ali.db")
 	if err != nil {
 		fmt.Println("Error connection: ", err)
 		return
@@ -24,7 +24,7 @@ func main() {
 		return
 	}
 	fmt.Println("SQLite3", version)
-	err = os.Remove("Ali.db")
+	err = os.Remove("ali.db")
 	if err != nil {
 		return
 	}

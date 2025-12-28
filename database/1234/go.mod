@@ -1,4 +1,4 @@
-module practice/database
+module practice/database/1234
 
 go 1.25.3
 

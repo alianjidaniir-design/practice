@@ -10,7 +10,7 @@ import (
 func main() {
 	sqlite06.Filename = "Ali.db"
 
-	db, err := sqlite06.openConnection
+	db, err := sqlite06.OpenConnection()
 	if err != nil {
 		fmt.Println(err)
 		return
