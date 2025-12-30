@@ -139,6 +139,34 @@ func ListLogged() []User {
 
 }
 
-func findAll() {
+func IsUserValid(u User) bool {
+	db := OpenConnection()
+	if db == nil {
+		log.Fatal("Error opening database")
+		return false
+	}
+	defer db.Close()
+	rows, err := db.Query("SELECT * FROM users WHERE username = $1 \n", u.Username)
+	if err != nil {
+		fmt.Println(err)
+	}
+	temp := User{}
+	var c1 int
+	var c2, c3 string
+	var c4 int64
+	var c5 int
+	var c6 int
+	for rows.Next() {
+		err := rows.Scan(&c1, &c2, &c3, &c4, &c5, &c6)
+		if err != nil {
+			log.Println(err)
+			return false
+		}
+		temp = Users{c1, c2, c3, c4, c5, c6}
 
+	}
+	if u.Username == temp.Username && u.Password == temp.Password {
+		return true
+	}
+	return false
 }
