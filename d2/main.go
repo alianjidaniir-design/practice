@@ -52,7 +52,7 @@ func main() {
 		log.Printf("Listening on %s\n", PORT)
 		err := s.ListenAndServe()
 		if err != nil {
-			log.Println("Error stating server: %s\n", err)
+			log.Printf("Error stating server: %s\n", err)
 			return
 		}
 	}()
