@@ -63,7 +63,7 @@ func InsertUser(u User) bool {
 	}
 	defer db.Close()
 	if IsUserValid(u) {
-		log.Println("User", u.username, " already exists!")
+		log.Println("User", u.Username, " already exists!")
 		return false
 	}
 	stm, err := db.Prepare("INSERT INTO users(username, password , lastlogin,admin,active) values ($1, $2 ,$3,$4,$5)")
@@ -71,11 +71,11 @@ func InsertUser(u User) bool {
 		log.Println("InsertUser:", err)
 		return false
 	}
-	stm.Exec(u.Username, u.Password, u.Lastlogin, u.Admin, u.Active)
+	stm.Exec(u.Username, u.Password, u.LastLogin, u.Admin, u.Active)
 	return true
 }
 
-func ListAllUsers() []Users {
+func ListAllUsers() []User {
 	db := OpenConnection()
 	if db == nil {
 		log.Fatal("Error opening database")
@@ -110,13 +110,13 @@ func ListLogged() []User {
 	db := OpenConnection()
 	if db == nil {
 		log.Fatal("Error opening database")
-		return []USer{}
+		return []User{}
 	}
 	defer db.Close()
 	rows, err := db.Query("SELECT * FROM users WHERE active \n")
 	if err != nil {
 		log.Println(err)
-		return []Users{}
+		return []User{}
 	}
 	all := []User{}
 	var c1 int
@@ -130,7 +130,7 @@ func ListLogged() []User {
 
 			log.Println(err)
 		}
-		temp := Users{c1, c2, c3, c4, c5, c6}
+		temp := User{c1, c2, c3, c4, c5, c6}
 		all = append(all, temp)
 
 	}
@@ -252,7 +252,7 @@ func IsUserAdmin(u User) bool {
 		log.Println("IsUserAdmin:", err)
 		return false
 	}
-	temp := Users{}
+	temp := User{}
 	var c1 int
 	var c2 string
 	var c3 string
@@ -270,7 +270,7 @@ func IsUserAdmin(u User) bool {
 		}
 		temp = User{c1, c2, c3, c4, c5, c6}
 	}
-	if u.Username == temp.Username && u.Password == temp.password && temp.Admin == 1 {
+	if u.Username == temp.Username && u.Password == temp.Password && temp.Admin == 1 {
 		return true
 	}
 	return false
@@ -299,7 +299,7 @@ func IsUserValid(u User) bool {
 			log.Println(err)
 			return false
 		}
-		temp = Users{c1, c2, c3, c4, c5, c6}
+		temp = User{c1, c2, c3, c4, c5, c6}
 
 	}
 	if u.Username == temp.Username && u.Password == temp.Password {

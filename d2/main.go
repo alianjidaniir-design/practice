@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	
+
 	"time"
 
 	"github.com/gorilla/mux"
@@ -36,10 +36,10 @@ func main() {
 	getMux := rMux.Methods(http.MethodGet).Subrouter()
 	getMux.HandleFunc("/getall", GetAllHandler)
 	getMux.HandleFunc("/getid/{username}", GetIDHandler)
-	getMux.HandleFunc("/logged", LoggedUserHandler)
-	getMux.HandleFunc("/username/{id:[0-9]+}", GetUserDataHandlern)
+	getMux.HandleFunc("/logged", LoggedUsersHandler)
+	getMux.HandleFunc("/username/{id:[0-9]+}", GetUserDataHandler)
 	putMux := rMux.Methods(http.MethodPut).Subrouter()
-	putMux.HandleFunc("/update", UpdataHandler)
+	putMux.HandleFunc("/update", UpdateHandler)
 	postMux := rMux.Methods(http.MethodPost).Subrouter()
 	postMux.HandleFunc("/add", AddHandler)
 	postMux.HandleFunc("login", LoginHandler)
@@ -49,8 +49,8 @@ func main() {
 	deleteMux.HandleFunc("/username/{id:[0-9]+}", DeleteHandler)
 
 	go func() {
-		log.Printf("Listening on %s\n", port)
-		err = s.ListenAndServe()
+		log.Printf("Listening on %s\n", PORT)
+		err := s.ListenAndServe()
 		if err != nil {
 			log.Println("Error stating server: %s\n", err)
 			return
