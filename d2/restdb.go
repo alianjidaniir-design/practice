@@ -75,7 +75,7 @@ func InsertUser(u User) bool {
 	return true
 }
 
-func listAllUsers() []Users {
+func ListAllUsers() []Users {
 	db := OpenConnection()
 	if db == nil {
 		log.Fatal("Error opening database")
@@ -139,6 +139,143 @@ func ListLogged() []User {
 
 }
 
+func FindUserID(ID int) User {
+	db := OpenConnection()
+	if db == nil {
+		log.Fatal("Error opening database")
+		return User{}
+	}
+	defer db.Close()
+	rows, err := db.Query("SELECT * FROM users where UserID = $1 \n", ID)
+	if err != nil {
+		log.Println("Query", err)
+		return User{}
+	}
+	defer rows.Close()
+	u := User{}
+	var c1 int
+	var c2, c3 string
+	var c4 int64
+	var c5 int
+	var c6 int
+	for rows.Next() {
+		err := rows.Scan(&c1, &c2, &c3, &c4, &c5, &c6)
+		if err != nil {
+			log.Println(err)
+			return User{}
+		}
+		u = User{c1, c2, c3, c4, c5, c6}
+		log.Println("Found user", u)
+	}
+	return u
+}
+
+func FindUserUsername(username string) User {
+	db := OpenConnection()
+	if db == nil {
+		log.Fatal("Error opening database")
+		return User{}
+	}
+	defer db.Close()
+	rows, err := db.Query("SELECT * FROM users where Username = $1 \n", username)
+	if err != nil {
+		log.Println("Query2", err)
+		return User{}
+	}
+	defer rows.Close()
+	u := User{}
+	var c1 int
+	var c2, c3 string
+	var c4 int64
+	var c5 int
+	var c6 int
+	for rows.Next() {
+		err := rows.Scan(&c1, &c2, &c3, &c4, &c5, &c6)
+		if err != nil {
+			log.Println(err)
+			return User{}
+		}
+		u = User{c1, c2, c3, c4, c5, c6}
+		log.Println("Found user:", u)
+	}
+	return u
+}
+
+// ReturnLoggedUsers is for returning all logged in users
+func ReturnLoggedUsers() []User {
+	db := OpenConnection()
+	if db == nil {
+		log.Fatal("Error opening database")
+		return []User{}
+	}
+	defer db.Close()
+	rows, err := db.Query("SELECT * FROM users WHERE active = 1 \n")
+	if err != nil {
+		log.Println("ReturnLoggedUsers:", err)
+		return []User{}
+	}
+	all := []User{}
+	var c1 int
+	var c2 string
+	var c3 string
+	var c4 int64
+	var c5 int
+	var c6 int
+	for rows.Next() {
+		err := rows.Scan(&c1, &c2, &c3, &c4, &c5, &c6)
+		if err != nil {
+			log.Println(err)
+			return []User{}
+		}
+		temp := User{c1, c2, c3, c4, c5, c6}
+		log.Println(all)
+		all = append(all, temp)
+
+	}
+	log.Println("Logged in:", all)
+	return all
+}
+
+// IsUserAdmin determines whether a user is
+// an administrator or not
+func IsUserAdmin(u User) bool {
+	db := OpenConnection()
+	if db == nil {
+		log.Fatal("Error opening database")
+		return false
+	}
+	defer db.Close()
+
+	statement := fmt.Sprintf(`SELECT * FROM users WHERE username = '%s'`, u.Username)
+	rows, err := db.Query(statement)
+	if err != nil {
+		log.Println("IsUserAdmin:", err)
+		return false
+	}
+	temp := Users{}
+	var c1 int
+	var c2 string
+	var c3 string
+	var c4 int64
+	var c5 int
+	var c6 int
+
+	// If there exist multiple users with the same username,
+	// we will get the FIRST ONE only.
+	for rows.Next() {
+		err := rows.Scan(&c1, &c2, &c3, &c4, &c5, &c6)
+		if err != nil {
+			log.Println("IsUserAdmin", err)
+			return false
+		}
+		temp = User{c1, c2, c3, c4, c5, c6}
+	}
+	if u.Username == temp.Username && u.Password == temp.password && temp.Admin == 1 {
+		return true
+	}
+	return false
+}
+
 func IsUserValid(u User) bool {
 	db := OpenConnection()
 	if db == nil {
@@ -169,4 +306,30 @@ func IsUserValid(u User) bool {
 		return true
 	}
 	return false
+}
+func UpdateUser(u User) bool {
+	db := OpenConnection()
+	if db == nil {
+		log.Fatal("Error opening database")
+		return false
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("UPDATE users SET username = $1, password = $2, admin = $3 , active = $4 WHERE UserID = $5 ")
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	resp, err := stmt.Exec(u.Username, u.Password, u.Admin, u.Active, u.ID)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	affect, err := resp.RowsAffected()
+	if err != nil {
+		log.Println("RowsAffected() failed", err)
+		return false
+	}
+	log.Println("Affected", affect)
+	return true
 }

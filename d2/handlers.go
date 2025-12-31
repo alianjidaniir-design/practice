@@ -6,10 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
 type User struct {
@@ -51,4 +48,24 @@ func TimeHandler(w http.ResponseWriter, r *http.Request) {
 	t := time.Now().Format("2006-01-02 15:04:05")
 	Body := "time is: " + t + "\n"
 	fmt.Fprintf(w, "%s", Body)
+}
+func AddHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Serving: ", r.URL.Path, "from", r.Host)
+	d, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+	users := []User{}
+	err = json.Unmarshal(d, &users)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	log.Println(users)
+	if !IsUserAdmin(users) {
+		lo
+	}
 }
