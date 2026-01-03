@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/http/httptrace"
 	"os"
-	"time"
 )
 
 func main() {
