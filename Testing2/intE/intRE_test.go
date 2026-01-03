@@ -15,13 +15,13 @@ func TestMatchInt(t *testing.T) {
 		t.Error(`matchInt("") != false`)
 	}
 	if matchInt("00") == false {
-		t.Error(`matchInt(+00) != true`)
+		t.Error(`matchInt("00") != true`)
 	}
 	if matchInt("-00") == false {
-		t.Error(`matchInt(-00) != true`)
+		t.Error(`matchInt("-00") != true`)
 	}
 	if matchInt("+00") == false {
-		t.Error(`matchInt(+00) != true`)
+		t.Error(`matchInt("+00") != true`)
 	}
 }
 
