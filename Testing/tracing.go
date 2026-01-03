@@ -24,6 +24,16 @@ func main() {
 
 	for i := 0; i < 3; i++ {
 		s := make([]byte, 50000000)
+		if s == nil {
+			fmt.Println("trace.out is nil")
+		}
+	}
+	for i := 0; i < 5; i++ {
+		s := make([]byte, 100000000)
+		if s == nil {
+			fmt.Println("trace.out is nil")
+		}
+		time.Sleep(time.Millisecond)
 	}
 
 }
