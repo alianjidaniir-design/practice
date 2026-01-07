@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestAdd(t *testing.T) {
+func TestAddInt(t *testing.T) {
 	testCases := []struct {
 		x, y, want int
 	}{
@@ -17,7 +17,7 @@ func TestAdd(t *testing.T) {
 		}
 	}
 }
-func FuzzAdd(f *testing.F) {
+func FuzzAddInt(f *testing.F) {
 	testCases := []struct {
 		x, y int
 	}{
@@ -29,6 +29,7 @@ func FuzzAdd(f *testing.F) {
 	}
 	f.Fuzz(func(t *testing.T, x, y int) {
 		result := AddInt(x, y)
+
 		if result != x+y {
 			t.Errorf("X: %d, Y: %d,Result %d, want %d", x, y, result, x+y)
 		}
