@@ -9,9 +9,10 @@ import (
 func R1(s string) []byte {
 	sAr := []byte(s)
 	rev := make([]byte, len(sAr))
+
 	l := len(sAr)
 	for i := 0; i < l; i++ {
-		rev[i] = sAr[l-i-1]
+		rev[i] = sAr[l-1-i]
 	}
 	return rev
 }
