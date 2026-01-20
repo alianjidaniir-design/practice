@@ -1,0 +1,3 @@
+module practice/database
+
+go 1.25.3

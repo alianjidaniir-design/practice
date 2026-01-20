@@ -45,6 +45,25 @@ func (t treeLast[T]) replaceLast(elem T) ([]T, error) {
 }
 
 func main() {
+
+	var myList list[int]
+	fmt.Println(myList)
+	myList.add(12)
+	myList.add(14)
+	myList.add(15)
+	myList.add(16)
+	myList.add(5)
+	myList.add(7)
+
+	cur := myList.start
+	for {
+		fmt.Println("*", cur)
+		if cur == nil {
+			break
+		}
+		cur = cur.next
+	}
+
 	ts := treeLast[int]{1, 2, 3, 4, 5, 6, 7, 8, 9, 99}
 	tt := treeLast[string]{"banana", "apple", "peach", "date"}
 	fmt.Println(ts, "\\", tt, 123)
