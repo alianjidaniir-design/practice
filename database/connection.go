@@ -18,15 +18,15 @@ func insertData(db *sql.DB, dsc string) error {
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
-	_, err = stmt.Exec(t)
+
+	_, err = stmt.Exec(t, dsc)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 func selectData(db *sql.DB, n int) error {
-	rows, err := db.Query("SELECT * FROM book WHERE id = ? ", n)
+	rows, err := db.Query("SELECT * FROM book WHERE id > ? ", n)
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func selectData(db *sql.DB, n int) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(data, id, description)
+		fmt.Println(id, data, description)
 	}
 	return nil
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS book (
 		fmt.Println(err)
 	}
 
-	for i := 0; i < 10; i++ {
+	for i := 1; i < 11; i = i + 1 {
 		dsc := "Description " + strconv.Itoa(i)
 		err = insertData(db, dsc)
 		if err != nil {
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS book (
 
 	}
 
-	err = selectData(db, 10)
+	err = selectData(db, 5)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -90,23 +90,22 @@ CREATE TABLE IF NOT EXISTS book (
 	ti := time.Now().Format("2006-01-02 15:04:05")
 	db.Exec("UPDATE book SET  time = ? WHERE id > ?", ti, 7)
 
-	err = selectData(db, 10)
+	err = selectData(db, 8)
 	if err != nil {
 		fmt.Println(err)
 	}
-	time.Sleep(1 * time.Second)
-	stm, _ := db.Prepare("DELETE from book WHERE id == ?")
-	_, err = stm.Exec(8)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = selectData(db, 10)
+	stmt, err := db.Prepare("DELETE from book WHERE id = ?")
+	_, err = stmt.Exec(8)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	query, err := db.Query("SELECT count(*) as count from book WHERE id > ?", 7)
+	err = selectData(db, 7)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	query, err := db.Query("SELECT count(*) as count from book")
 	if err != nil {
 		fmt.Println(err)
 		return
