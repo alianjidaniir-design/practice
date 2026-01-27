@@ -60,10 +60,10 @@ func selectData(db *sql.DB, n int) error {
 }
 
 func main() {
-	// Delete database file
+	// Delete database.go file
 	os.Remove(dbname)
 
-	// Connect and Create the SQLite database
+	// Connect and Create the SQLite database.go
 	db, err := sql.Open("sqlite3", dbname)
 	if err != nil {
 		fmt.Println("Error connecting:", err)
